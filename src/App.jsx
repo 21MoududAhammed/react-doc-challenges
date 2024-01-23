@@ -1,32 +1,41 @@
-import { useState, useEffect } from 'react';
-import Clock from './components/Clock';
-// import Clock from './../src/components/Index.jsx';
+import { useState } from 'react';
+import { letters } from './data.js';
+import Letter from './components/Letter.jsx';
 
-function useTime() {
-  const [time, setTime] = useState(() => new Date());
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
-  return time;
-}
 
-export default function App() {
-  const time = useTime();
-  const [color, setColor] = useState('lightcoral');
+
+export default function MailClient() {
+  const [selectedIds, setSelectedIds] = useState([]);
+
+ 
+
+  function handleToggle(toggledId) {
+    // TODO: allow multiple selection
+    setSelectedIds([...selectedIds, toggledId]);
+  }
+
   return (
-    <div>
-      <p>
-        Pick a color:{' '}
-        <select value={color} onChange={e => setColor(e.target.value)}>
-          <option value="lightcoral">lightcoral</option>
-          <option value="midnightblue">midnightblue</option>
-          <option value="rebeccapurple">rebeccapurple</option>
-        </select>
-      </p>
-      <Clock color={color} time={time.toLocaleTimeString()} />
-    </div>
+    <>
+      <h2>Inbox</h2>
+      <ul>
+        {letters.map(letter => (
+          <Letter
+            key={letter.id}
+            letter={letter}
+            isSelected={
+              // TODO: allow multiple selection
+               selectedIds.find(id => id === letter.d)
+            }
+            onToggle={handleToggle}
+          />
+        ))}
+        <hr />
+        <p>
+          <b>
+            You selected {selectedIds.length} letters
+          </b>
+        </p>
+      </ul>
+    </>
   );
 }
